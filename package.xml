@@ -1,0 +1,8 @@
+<packages>
+    <package name="bdmm" version='0.3.4-alpha"
+           url="https://github.com/tgvaughan/bdmm/releases/download/v0.3.4-alpha/bdmm.v0.3.4-alpha.zip"
+           projectURL="https://github.com/tgvaughan/bdmm"
+           description="Birth-death Migration Model" >
+        <depends on='beast2' atleast='2.5.0' atmost='2.5.9'/>
+    </package>
+</packages>
