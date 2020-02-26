@@ -3,6 +3,6 @@
            url="https://github.com/tgvaughan/BDMM-Prime/releases/download/v0.0.4/BDMM-Prime.v0.0.4.zip"
            projectURL="https://github.com/tgvaughan/BDMM-Prime"
            description="Birth-death Migration Model Reimplementation" >
-        <depends on="beast2" atleast="2.5.0" atmost="2.5.9"/>
+        <depends on="beast2" atleast="2.6.0" atmost="2.6.9"/>
     </package>
 </packages>
