@@ -1,5 +1,6 @@
 package bdmmprime.distribution;
 
+import bdmmprime.parameterization.CanonicalParameterization;
 import bdmmprime.parameterization.EpiParameterization;
 import bdmmprime.parameterization.Parameterization;
 import bdmmprime.parameterization.SkylineVectorParameter;
@@ -59,5 +60,40 @@ public class LikelihoodConditioningTest {
         assertEquals(0.3042198,
                 Math.exp(distr.calculateLogMinSampleProb(20, 5.0)),
                 1e-5);
+    }
+
+
+    @Test
+    public void testSampleCountProbabilities2() {
+
+        Parameterization param = new CanonicalParameterization();
+        param.initByName(
+                "birthRate",
+                new SkylineVectorParameter(
+                        null,
+                        new RealParameter("10.0"), 1),
+                "deathRate",
+                new SkylineVectorParameter(null,
+                        new RealParameter("1.0"), 1),
+                "samplingRate",
+                new SkylineVectorParameter(
+                        null,
+                        new RealParameter("0.05"), 1),
+                "removalProb",
+                new SkylineVectorParameter(null,
+                        new RealParameter("1.0"), 1),
+                "origin", new RealParameter("5.0"));
+
+        BirthDeathMigrationDistribution distr = new BirthDeathMigrationDistribution();
+        distr.initByName(
+                "tree", new TreeParser(
+                        "((A:1,B:1):1,C:1):0;",
+                        false,
+                        false,
+                        true,
+                        1),
+                "parameterization", param);
+
+       System.out.println(distr.calculateLogMinSampleProb(40, 5));
     }
 }
