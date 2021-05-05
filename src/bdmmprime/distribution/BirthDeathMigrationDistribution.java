@@ -907,11 +907,16 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
         } else {
             logP -= calculateLogMinSampleProb(conditionOnMinPsiSamplesInput.get(),
                     parameterization.getTotalProcessLength());
+
+            // with scaling
+            /*logP += Math.log(1.0e9) - calculateLogMinSampleProb(conditionOnMinPsiSamplesInput.get(),
+                    parameterization.getTotalProcessLength());*/
         }
 
         // Account for possible label permutations
         logP += -Gamma.logGamma(tree.getLeafNodeCount() + 1);
 
+        //System.out.println(Math.exp(logP));
         return logP;
     }
 
@@ -1107,7 +1112,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
      * @return probability of seeing k or more samples.
      */
     public double calculateLogMinSampleProb(int k, double t) {
-        int prec=5;
+        int prec=8;
         double res;
         while (true) {
             double sum = 1.0;
@@ -1119,14 +1124,39 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
             if (!Double.isNaN(res) && res <= 0.0 && res > Double.NEGATIVE_INFINITY)
                 break;
 
-            if (prec > 50) {
-                System.out.println("Sample prob calculation failed to converge for " + getID() + ".");
+            if (prec > 24) {
+                System.out.println("Sample prob calculation failed to converge for " + getID() + ". res = " + res);
                 break;
             }
 
             prec += 1;
-            System.out.println("Increasing precision to " + prec);
+            //System.out.println("Increasing precision to " + prec);
         }
+
+
+        /*// with scaling
+        int prec = 8;
+        double scaling = 1.0e9;
+        double res;
+        while (true) {
+            double sum = 1.0*scaling;
+            for (int j = 0; j <= k - 1; j++)
+                sum -= Math.exp(calculateLogSampleProb(j, t, prec))*scaling;
+
+            res = Math.log(sum);
+
+            if (!Double.isNaN(res)  && res > Double.NEGATIVE_INFINITY)
+                break;
+
+            if (prec > 24) {
+                System.out.println("Sample prob calculation failed to converge for " + getID() + ". res = " + res);
+                break;
+            }
+
+            prec += 1;
+            //System.out.println("Increasing precision to " + prec);
+        }*/
+
 
         return res;
     }
