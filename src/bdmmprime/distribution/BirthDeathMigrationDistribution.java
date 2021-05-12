@@ -1,5 +1,6 @@
 package bdmmprime.distribution;
 
+import bdmmprime.parameterization.CanonicalParameterization;
 import bdmmprime.parameterization.EpiParameterization;
 import bdmmprime.parameterization.Parameterization;
 import bdmmprime.parameterization.SkylineVectorParameter;
@@ -16,8 +17,7 @@ import beast.util.TreeParser;
 import org.apache.commons.math.special.Gamma;
 import org.apache.commons.math3.complex.Complex;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
@@ -1112,7 +1112,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
      * @return probability of seeing k or more samples.
      */
     public double calculateLogMinSampleProb(int k, double t) {
-        int prec=8;
+        int prec=5;
         double res;
         while (true) {
             double sum = 1.0;
@@ -1198,4 +1198,52 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
         rootTypeProbs = storedRootTypeProbs;
         storedRootTypeProbs = tmp;
     }
+
+
+    public static void main (String[] args) throws IOException {
+//        PrintStream output = System.out;
+        PrintStream output = new PrintStream("output_minSampProb_test.txt");
+        output.println("birthRate minSampProb");
+
+        File file = new File("C:/Users/rengg/Desktop/ETH/Semester8/Semester Project/Code/Comparing minSampProb/birthRates.csv");
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String lambda;
+        while ((lambda = br.readLine()) != null) {
+
+                Parameterization param = new CanonicalParameterization();
+                param.initByName(
+                        "birthRate",
+                        new SkylineVectorParameter(
+                                null,
+                                new RealParameter(lambda), 1),
+                        "deathRate",
+                        new SkylineVectorParameter(null,
+                                new RealParameter("1.0"), 1),
+                        "samplingRate",
+                        new SkylineVectorParameter(
+                                null,
+                                new RealParameter("0.05"), 1),
+                        "removalProb",
+                        new SkylineVectorParameter(null,
+                                new RealParameter("1.0"), 1),
+                        "origin", new RealParameter("5.0"));
+
+                BirthDeathMigrationDistribution distr = new BirthDeathMigrationDistribution();
+                distr.initByName(
+                        "tree", new TreeParser(
+                                "((A:1,B:1):1,C:1):0;",
+                                false,
+                                false,
+                                true,
+                                1),
+                        "parameterization", param);
+
+                /*for (int k = 0; k < 10; k++) {
+                    output.println(lambda + " " + distr.calculateLogMinSampleProb(2, 5.0));
+                }*/
+                output.println(lambda + " " + distr.calculateLogMinSampleProb(2, 5.0));
+        }
+        br.close();
+    }
+
 }
